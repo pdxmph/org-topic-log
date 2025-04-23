@@ -1,0 +1,75 @@
+* org-topic-log
+
+A lightweight Emacs Lisp library to capture timestamped log entries into one of your
+Org Agenda files tagged with a specific file‑level tag (by default, "topic"). It
+prompts you to choose from your `org-agenda-files`, shows each file’s `#+TITLE:`
+if present, and prepends your entry at the top of the file.
+
+**Features**
+
+  - Dynamically lists only agenda files whose `#+FILETAGS:` line contains your chosen tag.
+  - Displays each file’s `#+TITLE:` (if present) alongside its filename in the completion prompt.
+  - Prepends a heading with inactive timestamp (`%U`), user‑entered title, and tags (`%^g`).
+  - Zero‑dependency (beyond Org and seq) and easy to install.
+
+**Installation**
+
+1. Copy `org-topic-log.el` into a directory on your `load-path`, e.g. `~/.emacs.d/lisp/`.
+2. Add to your Emacs config (`init.el` or `config.el`):
+
+   #+BEGIN_SRC emacs-lisp
+   (add-to-list 'load-path "~/.emacs.d/lisp/")   ; adjust to your path
+   (require 'org-topic-log)
+   (org-topic-log-setup)
+   ;; Optional: bind a key
+   (global-set-key (kbd "C-c t") #'org-topic-log-capture)
+   #+END_SRC
+
+3. Restart Emacs (or `M-x doom/reload`).
+
+**Usage**
+
+- Run `M-x org-topic-log-capture` (or your keybinding).
+- You will be prompted:
+  1. **Select topic file:** choose from agenda files tagged with `#+FILETAGS: topic`.
+  2. **Title:** enter the heading text.
+  3. **Tags:** enter any Org tags (e.g. `:tag1:tag2:`).
+- The new entry will be prepended at the top of the chosen file:
+
+  #+BEGIN_EXAMPLE
+  * [2025-04-22 Tue 10:00] My note title :tag1:tag2:
+    <cursor here for content>
+  #+END_EXAMPLE
+
+**Customization**
+
+- `org-topic-log-filetag` (default `"topic"`)
+  : The file‑level tag to look for in `#+FILETAGS:`.
+
+You can change it via `M-x customize-group RET org-topic-log RET` or in your config:
+
+#+BEGIN_SRC emacs-lisp
+(setq org-topic-log-filetag "mytag")
+#+END_SRC
+
+**Troubleshooting**
+
+- "No agenda .org files with #+FILETAGS: topic":
+  - Ensure your `org-agenda-files` includes the files you expect.
+  - Verify each file has a line like `#+FILETAGS: topic` (case‑insensitive).
+  - Check `*Messages*` buffer for debug output from `org-topic-log--scan-files`.
+
+- "Cache must be active" or similar errors:
+  - Add `(setq org-element-use-cache nil)` before loading Org to disable the parser cache.
+
+**Development & Contributing**
+
+Feel free to fork and submit issues or pull requests. Key areas for enhancement:
+
+  - Support non‑agenda directory scanning fallback.
+  - Customize capture template format.
+  - Integrate with `org-capture-templates` more flexibly.
+
+**License**
+
+MIT License — see `LICENSE` file.
